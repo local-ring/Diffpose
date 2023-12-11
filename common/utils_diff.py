@@ -18,10 +18,12 @@ def get_beta_schedule(beta_schedule, *, beta_start, beta_end, num_diffusion_time
             )
             ** 2
         )
-    elif beta_schedule == "linear":
-        betas = np.linspace(
-            beta_start, beta_end, num_diffusion_timesteps, dtype=np.float64
-        )
+    elif beta_schedule == "linear":  # cosine variance schedule actually
+        x = np.linspace(beta_start, beta_end, num_diffusion_timesteps+1, dtype=np.float64)
+        alphas_cumprod = np.cos(((x / num_diffusion_timesteps) + 0.008) / (1 + 0.008) * math.pi * 0.5) ** 2
+        alphas_cumprod = alphas_cumprod / alphas_cumprod[0]
+        betas = 1 - (alphas_cumprod[1:] / alphas_cumprod[:-1])
+        betas = np.clip(betas, 0, 0.99)   # clip to 0.99 to avoid numerical instability
     elif beta_schedule == "const":
         betas = beta_end * np.ones(num_diffusion_timesteps, dtype=np.float64)
     elif beta_schedule == "jsd":  # 1/T, 1/(T-1), 1/(T-2), ..., 1

@@ -11,7 +11,7 @@ model:
     emd_dim: 96
     coords_dim: [5,5]
     num_layer: 5
-    n_head: 4
+    n_head: 20
     dropout: 0.25
     n_pts: 17
     ema_rate: 0.999
